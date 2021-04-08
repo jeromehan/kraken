@@ -2,8 +2,7 @@ cmake_minimum_required(VERSION 3.2.0)
 set(CMAKE_OSX_DEPLOYMENT_TARGET 10.14)
 project(KrakenBridge)
 
-set(CMAKE_CXX_FLAGS "-std=c++17 -stdlib=libc++ -flto")
-set(CMAKE_C_FLAGS -flto)
+set(CMAKE_CXX_FLAGS "-std=c++17 -stdlib=libc++")
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 string(TOLOWER ${CMAKE_SYSTEM_NAME} CMAKE_SYSTEM_NAME)
 string(TOLOWER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE)
@@ -73,14 +72,15 @@ if ($ENV{KRAKEN_JS_ENGINE} MATCHES "jsc")
             JavaScriptCore
             )
   else ()
+    add_compile_options(-DIS_APPLE=1)
     if (EXISTS ${DEBUG_JSC_ENGINE})
+      add_compile_options(-DENABLE_DEBUGGER=1)
       list(APPEND BRIDGE_INCLUDE ${DEBUG_JSC_ENGINE}/Headers)
       add_library(JavaScriptCore SHARED IMPORTED)
       set_target_properties(JavaScriptCore PROPERTIES IMPORTED_LOCATION ${DEBUG_JSC_ENGINE}/JavaScriptCore)
       list(APPEND BRIDGE_LINK_LIBS JavaScriptCore)
       include(inspector/inspector.cmake)
       list(APPEND BRIDGE_LINK_LIBS inspector)
-      add_compile_options(-DENABLE_DEBUGGER=1)
     else()
       list(APPEND BRIDGE_LINK_LIBS "-framework JavaScriptCore")
     endif()
@@ -208,9 +208,10 @@ target_include_directories(kraken PRIVATE
 target_link_libraries(kraken PRIVATE ${BRIDGE_LINK_LIBS})
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "release" OR ${CMAKE_BUILD_TYPE} STREQUAL "relwithdebinfo")
+  set(CMAKE_C_FLAGS -flto)
   ## http://ptspts.blogspot.com/2013/12/how-to-make-smaller-c-and-c-binaries.html
   ### remove dynamic_cast and exceptions
-  target_compile_options(kraken PRIVATE -fno-exceptions -fvisibility=hidden)
+  target_compile_options(kraken PRIVATE -fno-exceptions -fvisibility=hidden -flto)
 else()
   ### remove dynamic_cast and exceptions
   target_compile_options(kraken PRIVATE -fno-exceptions)
