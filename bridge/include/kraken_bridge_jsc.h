@@ -6,6 +6,11 @@
 #ifndef KRAKEN_BRIDGE_JSC_H
 #define KRAKEN_BRIDGE_JSC_H
 
+
+// MUST READ:
+// All the struct which prefix with NativeXXX struct (exp: NativeElement) has a corresponding struct in Dart code.
+// All struct members include variables and functions must be follow the same order with Dart class, to keep the same memory layout cross dart and C++ code.
+
 #include <JavaScriptCore/JavaScript.h>
 #include <chrono>
 #include <deque>
@@ -418,9 +423,9 @@ class JSEventTarget : public HostClass {
 public:
   static std::unordered_map<JSContext *, JSEventTarget *> instanceMap;
   static JSEventTarget *instance(JSContext *context);
-  DEFINE_OBJECT_PROPERTY(EventTarget, 1, eventTargetId)
+  DEFINE_OBJECT_PROPERTY(EventTarget, 1, eventTargetId);
   DEFINE_PROTOTYPE_OBJECT_PROPERTY(EventTarget, 4, addEventListener, removeEventListener, dispatchEvent,
-                                   __clearListeners__)
+                                   __clearListeners__);
 
   JSObjectRef instanceConstructor(JSContextRef ctx, JSObjectRef constructor, size_t argumentCount,
                                   const JSValueRef *arguments, JSValueRef *exception) override;
@@ -505,8 +510,8 @@ public:
   static std::unordered_map<JSContext *, JSNode *> instanceMap;
   static JSNode *instance(JSContext *context);
   DEFINE_OBJECT_PROPERTY(Node, 10, isConnected, ownerDocument, firstChild, lastChild, parentNode, childNodes, previousSibling,
-                         nextSibling, nodeType, textContent)
-  DEFINE_PROTOTYPE_OBJECT_PROPERTY(Node, 6, appendChild, remove, removeChild, insertBefore, replaceChild, cloneNode)
+                         nextSibling, nodeType, textContent);
+  DEFINE_PROTOTYPE_OBJECT_PROPERTY(Node, 6, appendChild, remove, removeChild, insertBefore, replaceChild, cloneNode);
 
   JSObjectRef instanceConstructor(JSContextRef ctx, JSObjectRef constructor, size_t argumentCount,
                                   const JSValueRef *arguments, JSValueRef *exception) override;
@@ -663,9 +668,9 @@ struct NativeDocument {
 
 class DocumentInstance : public NodeInstance {
 public:
-  DEFINE_OBJECT_PROPERTY(Document, 5, nodeName, all, cookie, body, documentElement)
+  DEFINE_OBJECT_PROPERTY(Document, 5, nodeName, all, cookie, body, documentElement);
   DEFINE_PROTOTYPE_OBJECT_PROPERTY(Document, 6, createElement, createTextNode, createComment, getElementById,
-                                   getElementsByTagName, createEvent)
+                                   getElementsByTagName, createEvent);
 
   static DocumentInstance *instance(JSContext *context);
 
@@ -757,7 +762,7 @@ protected:
 
 class StyleDeclarationInstance : public HostClass::Instance {
 public:
-  DEFINE_PROTOTYPE_OBJECT_PROPERTY(CSSStyleDeclaration, 3, setProperty, removeProperty, getPropertyValue)
+  DEFINE_PROTOTYPE_OBJECT_PROPERTY(CSSStyleDeclaration, 3, setProperty, removeProperty, getPropertyValue);
 
   StyleDeclarationInstance() = delete;
   StyleDeclarationInstance(CSSStyleDeclaration *cssStyleDeclaration, EventTargetInstance *ownerEventTarget);
@@ -781,10 +786,10 @@ class KRAKEN_EXPORT JSElement : public JSNode {
 public:
   DEFINE_OBJECT_PROPERTY(Element, 17, style, attributes, nodeName, tagName, offsetLeft, offsetTop, offsetWidth,
                          offsetHeight, clientWidth, clientHeight, clientTop, clientLeft, scrollTop, scrollLeft,
-                         scrollHeight, scrollWidth, children)
+                         scrollHeight, scrollWidth, children);
 
   DEFINE_PROTOTYPE_OBJECT_PROPERTY(Element, 10, getBoundingClientRect, getAttribute, setAttribute, hasAttribute,
-                                   removeAttribute, toBlob, click, scroll, scrollBy, scrollTo)
+                                   removeAttribute, toBlob, click, scroll, scrollBy, scrollTo);
 
   enum class ElementTagName {
     kDiv,
@@ -973,7 +978,7 @@ struct NativeGestureEvent {
 
 class JSGestureEvent : public JSEvent {
 public:
-  DEFINE_OBJECT_PROPERTY(GestureEvent, 8, state, direction, deltaX, deltaY, velocityX, velocityY, scale, rotation)
+  DEFINE_OBJECT_PROPERTY(GestureEvent, 8, state, direction, deltaX, deltaY, velocityX, velocityY, scale, rotation);
 
   DEFINE_PROTOTYPE_OBJECT_PROPERTY(GestureEvent, 1, initGestureEvent);
 
