@@ -195,8 +195,6 @@ task('build-darwin-kraken-lib', done => {
     externCmakeArgs.push(`-DDEBUG_JSC_ENGINE=${debugJsEngine}`)
   }
 
-  console.log(externCmakeArgs);
-
   execSync(`cmake -DCMAKE_BUILD_TYPE=${buildType} ${enableInspector ? '' : ''} -DENABLE_TEST=true ${externCmakeArgs.join(' ')} \
     -G "Unix Makefiles" -B ${paths.bridge}/cmake-build-macos-x86_64 -S ${paths.bridge}`, {
     cwd: paths.bridge,
